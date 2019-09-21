@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <Product>UserManagement.UnitTests</Product>
     <Title>UserManagement.UnitTests</Title>
+    <LangVersion>8</LangVersion>
     <Copyright>Copyright © Mark Seemann 2018</Copyright>
     <RootNamespace>Ploeh.Samples.UserManagement.UnitTests</RootNamespace>
     <AssemblyName>Ploeh.Samples.UserManagement.UnitTests</AssemblyName>

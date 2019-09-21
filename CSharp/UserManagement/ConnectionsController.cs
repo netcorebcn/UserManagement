@@ -20,31 +20,28 @@ namespace Ploeh.Samples.UserManagement
 
         public IUserRepository UserRepository { get; }
 
-        public IHttpActionResult Post(string userId, string otherUserId)
+        public IHttpActionResult Post(string userId, string otherUserId) =>
+            LookupUser(userId) switch
+            {
+                FoundUserLookupResult foundResult => LookupOtherUser(foundResult.User, otherUserId),
+                NotFoundUserLookupResult _ => BadRequest("User not found."),
+                InvalidIdUserLookupResult _ => BadRequest("Invalid user ID."),
+                _ => BadRequest("Sorry no sum types in C#")
+            };
+
+        private IHttpActionResult LookupOtherUser(User user, string otherUserId) =>
+            LookupUser(otherUserId) switch
+            {
+                FoundUserLookupResult otherFoundResult => ConnectUsers(user, otherFoundResult.User),
+                NotFoundUserLookupResult _ => BadRequest("Other user not found."),
+                InvalidIdUserLookupResult _ => BadRequest("Invalid ID for other user."),
+                _ => BadRequest("Sorry no sum types in C#")
+            };
+
+        private IHttpActionResult ConnectUsers(User user, User otherUser)
         {
-            User user = null;
-            IUserLookupResult res = LookupUser(userId);
-            var foundResult = res as FoundUserLookupResult;
-            if (foundResult != null)
-                user = foundResult.User;
-            if (res is NotFoundUserLookupResult)
-                return BadRequest("User not found.");
-            if (res is InvalidIdUserLookupResult)
-                return BadRequest("Invalid user ID.");
-
-            User otherUser = null;
-            res = LookupUser(otherUserId);
-            foundResult = res as FoundUserLookupResult;
-            if (foundResult != null)
-                otherUser = foundResult.User;
-            if (res is NotFoundUserLookupResult)
-                return BadRequest("Other user not found.");
-            if (res is InvalidIdUserLookupResult)
-                return BadRequest("Invalid ID for other user.");
-
             user.Connect(otherUser);
             UserRepository.Update(user);
-
             return Ok(otherUser);
         }
 
