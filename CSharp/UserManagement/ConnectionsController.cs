@@ -26,7 +26,7 @@ namespace Ploeh.Samples.UserManagement
                 FoundUserLookupResult foundResult => LookupOtherUser(foundResult.User, otherUserId),
                 NotFoundUserLookupResult _ => BadRequest("User not found."),
                 InvalidIdUserLookupResult _ => BadRequest("Invalid user ID."),
-                _ => BadRequest("Sorry no sum types in C#")
+                IUserLookupResult _ => BadRequest("Sorry no sum types in C#")
             };
 
         private IHttpActionResult LookupOtherUser(User user, string otherUserId) =>
@@ -35,7 +35,7 @@ namespace Ploeh.Samples.UserManagement
                 FoundUserLookupResult otherFoundResult => ConnectUsers(user, otherFoundResult.User),
                 NotFoundUserLookupResult _ => BadRequest("Other user not found."),
                 InvalidIdUserLookupResult _ => BadRequest("Invalid ID for other user."),
-                _ => BadRequest("Sorry no sum types in C#")
+                IUserLookupResult _ => BadRequest("Sorry no sum types in C#")
             };
 
         private IHttpActionResult ConnectUsers(User user, User otherUser)
